@@ -1,5 +1,3 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   CommentContainer,
   CommentItem,
@@ -7,9 +5,20 @@ import {
   CommentContent,
   CommentDate,
 } from "./CommentList.styles";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CommentList = () => {
-  const comments = [];
+const CommentList = ({ boardNo, refresh }) => {
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    axios.get(`http://localhost/comments/${boardNo}`).then((response) => {
+      setComments([...response.data]);
+    });
+  }, [refresh]);
+
   return (
     <CommentContainer>
       {comments.length === 0 ? (
@@ -17,7 +26,7 @@ const CommentList = () => {
       ) : (
         comments.map((comment) => (
           <CommentItem key={comment.commentNo}>
-            <CommentAuthor>{comment.userNo}</CommentAuthor>
+            <CommentAuthor>{comment.commentWriter}</CommentAuthor>
             <CommentContent>{comment.content}</CommentContent>
             <CommentDate>
               {new Date(comment.createDate).toLocaleString()}

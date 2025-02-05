@@ -23,6 +23,7 @@ const BoardDetail = () => {
   const [error, setError] = useState(false);
   const { auth } = useContext(AuthContext);
   const navi = useNavigate();
+  const [refreshComments, setRefreshComments] = useState(false); // 댓글 조회용 state
 
   const handleBack = () => {
     navi(-1);
@@ -69,6 +70,10 @@ const BoardDetail = () => {
     navi(`/boards/${id}/edit`);
   };
 
+  const triggerRefreshComment = () => {
+    setRefreshComments((prev) => !prev);
+  };
+
   if (loading) {
     return (
       <Container>
@@ -106,10 +111,15 @@ const BoardDetail = () => {
       <hr />
 
       <h3>댓글</h3>
-      <CommentForm />
-      <CommentList />
+      <CommentForm boardNo={id} onSuccess={triggerRefreshComment} />
+      <CommentList boardNo={id} refresh={refreshComments} />
     </Container>
   );
 };
 
 export default BoardDetail;
+/*
+재렌더링 =>
+  state가 바뀌거나
+  props가 바뀌거나
+*/
